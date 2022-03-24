@@ -25,6 +25,7 @@ h1 {
 }
 
 h2 {
+    width: 375px;
     height: 110px;
     font-family: 'Roboto';
     font-size: 24px;
@@ -35,9 +36,12 @@ h2 {
     align-items: center;
     text-align: center;
     color: #293845;
+    background-color: #ffffff;
+    margin: auto auto;
 }
 
 h3 {
+    width: 375px;
     height: 110px;
     font-family: 'Roboto';
     font-size: 24px;
@@ -48,6 +52,7 @@ h3 {
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-color: #ffffff;
 }
 
 .tela-filme {
@@ -56,6 +61,16 @@ h3 {
     margin: auto auto;
     display: flex;
     flex-wrap: wrap;
+    background-color: #ffffff;
+}
+
+.tela-sessoes {
+    width: 375px;
+    height: 100%;
+    margin: auto auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
 }
 
 .tela-filme-moldura {
@@ -75,4 +90,47 @@ h3 {
     width: 129px;
     height: 193px;
     border-radius: 3px;
+}
+
+.dia-data {
+    margin-left: 24px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+}
+
+span {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: #293845;
+}
+
+.boxes {
+    margin-top: 22px;
+    margin-left: 23px;
+    margin-bottom: 23px;
+    height: 43px;
+    display: flex;
+    flex-direction: row;
+}
+
+.box {
+    height: 43px;
+    width: 83px;
+    margin-right: 10px;
+    background-color: #E8833A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.horarios {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 21px;
+    letter-spacing: 0.02em;
+    color: #ffffff;
 }
