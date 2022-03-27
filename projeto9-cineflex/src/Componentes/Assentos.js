@@ -6,6 +6,7 @@ import axios from "axios";
 export default function Assentos() {
 
     const { idSessao } = useParams()
+    
     const [seats, setSeats] = useState([])
     const [footer, setFooter] = useState([])
     const [data, setData] = useState([])
@@ -21,17 +22,17 @@ export default function Assentos() {
         })
     }, [])
 
-    const[Selecionado,setSelecionado] = useState(false)
+    const[selecionado,setSelecionado] = useState(false)
 
     const [addAssento, setAddAssento] = useState([])
-    const adicionarAssento = (resultado) => {setAddAssento([...addAssento], addAssento.push(resultado))}
+    const adicionarAssento = (resultado) => {setAddAssento([...addAssento, resultado])}
 
     console.log(addAssento)
-    console.log(Selecionado)
+    console.log(selecionado)
 
     function add () {
         setSelecionado(true)
-        adicionarAssento(seats.name)
+        adicionarAssento(idSessao.name)
     }
 
     return (
@@ -44,14 +45,22 @@ export default function Assentos() {
                 <div className="caixa-assentos">
                     {seats.map((seat) => {
                         const {name, isAvailable} = seat
-                        return isAvailable ?
-                        <div className="assentos-disponiveis">
-                         <p className="assentos-p">{name}</p>
-                        </div>
-                        :
-                    <div className="assentos-indisponiveis">
-                         <p className="assentos-p">{name}</p>
-                        </div>
+                       
+                        if (isAvailable === true){
+                           if(selecionado === false) {
+                               return <div className="assentos-disponiveis">
+                               <p className="assentos-p" onClick={add}>{name}</p>
+                              </div>
+                           } else if (selecionado === true) {
+                               return <div className="assentos-selecionados">
+                               <p className="assentos-p" onClick={() => setSelecionado(false)}>{name}</p>
+                              </div>
+                           }
+                        } else {
+                            return <div className="assentos-indisponiveis">
+                            <p className="assentos-p">{name}</p>
+                           </div>
+                        }
                         
                     })}
                 </div>
