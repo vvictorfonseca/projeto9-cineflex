@@ -79,7 +79,7 @@ function Assento({ id, isAvailable, name, addAssento, setAddAssento}) {
         if (selecionado === false) {
 
             return <div className="assentos-disponiveis" onClick={() => {
-                setAddAssento([...addAssento, name]);
+                setAddAssento([...addAssento, id]);
                 setSelecionado(true)
             }}>
                 <p className="assentos-p">{name}</p>
@@ -88,7 +88,7 @@ function Assento({ id, isAvailable, name, addAssento, setAddAssento}) {
         } else if (selecionado === true) {
             return <div className="assentos-selecionados" onClick={() => {
                 setSelecionado(false);
-                setAddAssento(addAssento.splice(addAssento.indexOf(name), 1))
+                setAddAssento(addAssento.splice(addAssento.indexOf(id), 1))
             }}>
                 <p className="assentos-p">{name}</p>
             </div>

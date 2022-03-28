@@ -36,8 +36,8 @@ export default function Horario() {
                         {showtimes.map((hora) => {
                             const { name, id } = hora
                             
-                            return  <Link to={`/assentos/${id}`}>
-                            <div className="box"><p className="horarios" style={{ textDecoration: 'none' }}>{name}</p></div>
+                            return  <Link to={`/assentos/${id}`} style={{ textDecoration: 'none' }}>
+                            <div className="box"><p className="horarios">{name}</p></div>
                             </Link>
                         })}
                     </div>
