@@ -1,15 +1,16 @@
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useState, useEffect } from "react";
 import axios from "axios";
-
 
 export default function Assentos() {
 
     const { idSessao } = useParams()
-    
+
     const [seats, setSeats] = useState([])
     const [footer, setFooter] = useState([])
     const [data, setData] = useState([])
+    const [addAssento, setAddAssento] = useState([])
+    const [conteudo, setConteudo] = useState({})
 
     useEffect(() => {
 
@@ -19,23 +20,12 @@ export default function Assentos() {
             setSeats(response.data.seats)
             setFooter(response.data.movie)
             setData(response.data.day)
+            setConteudo(response.data)
         })
     }, [])
 
-    const[selecionado,setSelecionado] = useState(false)
 
-    const [addAssento, setAddAssento] = useState([])
-    const adicionarAssento = (resultado) => {setAddAssento([...addAssento, resultado])}
-
-    console.log(addAssento)
-    console.log(selecionado)
-
-    function add () {
-        setSelecionado(true)
-        adicionarAssento(idSessao.name)
-    }
-
-    return (
+    return conteudo.seats ? (
 
         <>
             <h2>Selecione o(s) assento(s)</h2>
@@ -43,67 +33,140 @@ export default function Assentos() {
             <session className="tela-sessoes">
 
                 <div className="caixa-assentos">
-                    {seats.map((seat) => {
-                        const {name, isAvailable} = seat
-                       
-                        if (isAvailable === true){
-                           if(selecionado === false) {
-                               return <div className="assentos-disponiveis">
-                               <p className="assentos-p" onClick={add}>{name}</p>
-                              </div>
-                           } else if (selecionado === true) {
-                               return <div className="assentos-selecionados">
-                               <p className="assentos-p" onClick={() => setSelecionado(false)}>{name}</p>
-                              </div>
-                           }
-                        } else {
-                            return <div className="assentos-indisponiveis">
-                            <p className="assentos-p">{name}</p>
-                           </div>
-                        }
-                        
-                    })}
+                    {seats.map((seat) =>
+
+                        <Assento
+                            key={seat.id}
+                            isAvailable={seat.isAvailable}
+                            id={seat.id}
+                            name={seat.name}
+                            addAssento={addAssento}
+                            setAddAssento={setAddAssento}
+                        />)}
+
                 </div>
 
-                <div className="opcoes-assentos">
-                    <div className="opcao-assentos">
-                        <div className="circulo-assento"></div>
-                        <p>Selecionado</p>
-                    </div>
 
-                    <div className="opcao-assentos">
-                        <div className="circulo-assento2"></div>
-                        <p>Disponível</p>
-                    </div>
+                <LegendaAssentos />
 
-                    <div className="opcao-assentos">
-                        <div className="circulo-assento3"></div>
-                        <p>Indisponível</p>
-                    </div>
-                </div>
+               
+                <Formulario addAssento={addAssento} conteudo={conteudo} />
 
-                <div className="inputs">
-                    <p>Nome do comprador:</p>
-                    <input type="text" placeholder="Digite seu nome..."/>
-                    <p>CPF do comprador:</p>
-                    <input type="text" placeholder="Digite seu CPF..."/>
-
-                    <button>Reservar assento(s)</button>
-                </div>
-
-                
                 <div className="fundo">
                     <div className="moldura-img-fundo">
                         <img className="img-fundo" src={footer.posterURL}></img>
                     </div>
                     <div>
-                    <p>{footer.title}</p>
-                    <span>{data.weekday} - {data.date}</span>
+                        <p>{footer.title}</p>
+                        <span>{data.weekday} - {data.date}</span>
                     </div>
                 </div>
+                
 
             </session>
         </>
 
+    )
+    :
+    (<p>Carregando...</p>)
+}
+
+function Assento({ id, isAvailable, name, addAssento, setAddAssento}) {
+
+    const [selecionado, setSelecionado] = useState(false)
+
+    if (isAvailable === true) {
+        if (selecionado === false) {
+
+            return <div className="assentos-disponiveis" onClick={() => {
+                setAddAssento([...addAssento, name]);
+                setSelecionado(true)
+            }}>
+                <p className="assentos-p">{name}</p>
+            </div>
+
+        } else if (selecionado === true) {
+            return <div className="assentos-selecionados" onClick={() => {
+                setSelecionado(false);
+                setAddAssento(addAssento.splice(addAssento.indexOf(name), 1))
+            }}>
+                <p className="assentos-p">{name}</p>
+            </div>
+        }
+    } else {
+        return <div className="assentos-indisponiveis" onClick={() => alert("Este assento já está reservado!")}>
+            <p className="assentos-p">{name}</p>
+        </div>
+    }
+    
+}
+
+function LegendaAssentos() {
+    
+    return (
+        <div className="opcoes-assentos">
+            <div className="opcao-assentos">
+                <div className="circulo-assento"></div>
+                <p>Selecionado</p>
+            </div>
+
+            <div className="opcao-assentos">
+                <div className="circulo-assento2"></div>
+                <p>Disponível</p>
+            </div>
+
+            <div className="opcao-assentos">
+                <div className="circulo-assento3"></div>
+                <p>Indisponível</p>
+            </div>
+        </div>
+    )
+}
+
+function Formulario (props) {
+
+    const {addAssento, conteudo} = props
+    
+    const navigate = useNavigate();
+
+    const [nomeUsuario, setNomeUsuario] = useState("")
+    const [cpf, setCpf] = useState("")
+
+    const obj = {
+        ids: addAssento,
+        nome: nomeUsuario,
+        cpf: cpf
+    }
+
+    function reservarAssentos (e) {
+        e.preventDefault()
+        
+        const postURL = "https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many"
+
+        const promise = axios.post(postURL, obj)
+
+        promise.then(response => {
+            console.log("objeto", obj)
+            console.log(response)
+            alert("Assentos reservados")
+            navigate("/sucesso", {state: {conteudo, obj}});
+
+        })
+        promise.catch(err => {
+            alert("Algo deu errado!")
+        })
+    }
+
+    return (
+        <form onSubmit={reservarAssentos}>
+        <div className="inputs">
+            <p>Nome do comprador:</p>
+            <input type = "text" value = {nomeUsuario} placeholder="Digite seu nome..." onChange={(e) => setNomeUsuario(e.target.value)} required />
+            <p>CPF do comprador:</p>
+            <input type = "text" value = {cpf} placeholder="Digite seu CPF..."  onChange={(e) => setCpf(e.target.value)} required />
+
+            <button type="text">Reservar assento(s)</button>
+        </div>
+        </form>
     )
 }

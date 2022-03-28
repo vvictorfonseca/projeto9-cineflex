@@ -37,7 +37,7 @@ export default function Horario() {
                             const { name, id } = hora
                             
                             return  <Link to={`/assentos/${id}`}>
-                            <div className="box"><p className="horarios">{name}</p></div>
+                            <div className="box"><p className="horarios" style={{ textDecoration: 'none' }}>{name}</p></div>
                             </Link>
                         })}
                     </div>

@@ -52,6 +52,7 @@ h3 {
     align-items: center;
     text-align: center;
     background-color: #ffffff;
+    margin: auto auto;
 }
 
 .tela-filme {
@@ -70,6 +71,8 @@ h3 {
     display: flex;
     flex-direction: column;
     background-color: #ffffff;
+    word-break: break-all;
+    word-wrap:break-word
 }
 
 .tela-filme-moldura {
@@ -339,4 +342,31 @@ button {
     font-size: 18px;
     border: none;
     margin-bottom: 20px;
+}
+
+.filme-sessao {
+    width: 375px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 30px;
+    margin-left: 29px;
+    word-break: break-all;
+    word-wrap:break-word
+}
+
+.filme-sessao span {
+    margin-bottom: 13px;
+    font-family: 'Roboto';
+    font-size: 24px;
+    color: #293845;
+}
+
+.filme-sessao p {
+    margin-bottom: 10px;
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-size: 22px;
+    color: #293845;
+    word-break: break-all;
+    word-wrap:break-word
 }
