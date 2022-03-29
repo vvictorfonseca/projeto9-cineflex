@@ -126,6 +126,7 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .horarios {
@@ -205,6 +206,7 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .assentos-indisponiveis {
@@ -219,6 +221,7 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .assentos-selecionados {
@@ -233,6 +236,7 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .assentos-p {
