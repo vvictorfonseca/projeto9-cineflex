@@ -1,11 +1,14 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 import Logo from "./../Midias/logo.png";
 
 function Register () {
+
+    const navigate = useNavigate();
 
     const [dataRegister, setDataRegister] = useState({email: "", password: "", name: "", url: ""})
 
@@ -21,16 +24,26 @@ function Register () {
 
         const POSTURLREGISTER = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up"
 
+        const promise = axios.post(POSTURLREGISTER, obj);
+
+        promise.then(response => {
+            const {data} = response;
+            console.log(data)
+            navigate("/")
+        })
+        promise.catch(err => console.log(err.response))
     }
 
     return (
         <ContainerRegister>
             <Img src={Logo} />
-            <input type="email" placeholder="Email" value={dataRegister.email} onChange={(e) => setDataRegister({...dataRegister, email: e.event.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataRegister.password} onChange={(e) => setDataRegister({...dataRegister, password: e.event.value })} ></input>
-            <input type="text" placeholder="Nome" value={dataRegister.name} onChange={(e) => setDataRegister({...dataRegister, name: e.event.value })} ></input>
-            <input type="url" placeholder="Foto" value={dataRegister.url} onChange={(e) => setDataRegister({...dataRegister, url: e.event.value})} ></input>
-            <button>Cadastrar</button>
+            <form onSubmit={RegisterNewUser}>
+            <input type="email" placeholder="Email" value={dataRegister.email} onChange={(e) => setDataRegister({...dataRegister, email: e.target.value})} ></input>
+            <input type="password" placeholder="Senha" value={dataRegister.password} onChange={(e) => setDataRegister({...dataRegister, password: e.target.value })} ></input>
+            <input type="text" placeholder="Nome" value={dataRegister.name} onChange={(e) => setDataRegister({...dataRegister, name: e.target.value })} ></input>
+            <input type="url" placeholder="Foto" value={dataRegister.url} onChange={(e) => setDataRegister({...dataRegister, url: e.target.value})} ></input>
+            <button type='submit'>Cadastrar</button>
+            </form>
             <Link to='/'> <p>Já tem uma conta? Faça login!</p> </Link>
         </ContainerRegister>
     )
@@ -50,8 +63,8 @@ const ContainerRegister = styled.div`
         height: 45px;
         border: 1px solid #D5D5D5;
         border-radius: 5px;
-        margin: auto auto;
         margin-top: 6px;
+        margin-left: 36px;
     }
 
     input::placeholder {
@@ -67,10 +80,11 @@ const ContainerRegister = styled.div`
         color: white;
         border: none;
         border-radius: 4.63636px;
-        margin: auto auto;
         margin-top: 6px;
+        margin-left: 36px;
         font-family: 'Lexend Deca';
         font-size: 20.976px;
+        cursor: pointer;
     }
 
     p {
