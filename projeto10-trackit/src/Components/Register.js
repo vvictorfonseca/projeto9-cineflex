@@ -1,8 +1,10 @@
-import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
+
 import axios from "axios";
+import styled from 'styled-components';
 
 import Logo from "./../Midias/logo.png";
 
@@ -11,6 +13,7 @@ function Register () {
     const navigate = useNavigate();
 
     const [dataRegister, setDataRegister] = useState({email: "", password: "", name: "", url: ""})
+    const [isloading, setIsLoading] = useState(false)
 
     const obj = {
         email: dataRegister.email,
@@ -21,6 +24,7 @@ function Register () {
 
     function RegisterNewUser (e) {
         e.preventDefault()
+        setIsLoading(true)
 
         const POSTURLREGISTER = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up"
 
@@ -29,20 +33,40 @@ function Register () {
         promise.then(response => {
             const {data} = response;
             console.log(data)
+            setIsLoading(false)
             navigate("/")
         })
-        promise.catch(err => console.log(err.response))
+        promise.catch(err => {
+            console.log(err.response)
+            setIsLoading(false)
+            alert("Erro ao registrar um novo usuário!")
+        })
     }
-
+    
     return (
+    isloading === false ?
         <ContainerRegister>
             <Img src={Logo} />
             <form onSubmit={RegisterNewUser}>
-            <input type="email" placeholder="Email" value={dataRegister.email} onChange={(e) => setDataRegister({...dataRegister, email: e.target.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataRegister.password} onChange={(e) => setDataRegister({...dataRegister, password: e.target.value })} ></input>
-            <input type="text" placeholder="Nome" value={dataRegister.name} onChange={(e) => setDataRegister({...dataRegister, name: e.target.value })} ></input>
-            <input type="url" placeholder="Foto" value={dataRegister.url} onChange={(e) => setDataRegister({...dataRegister, url: e.target.value})} ></input>
+            <input type="email" placeholder="Email" value={dataRegister.email} disabled={false} onChange={(e) => setDataRegister({...dataRegister, email: e.target.value})} ></input>
+            <input type="password" placeholder="Senha" value={dataRegister.password} disabled={false} onChange={(e) => setDataRegister({...dataRegister, password: e.target.value })} ></input>
+            <input type="text" placeholder="Nome" value={dataRegister.name} disabled={false} onChange={(e) => setDataRegister({...dataRegister, name: e.target.value })} ></input>
+            <input type="url" placeholder="Foto" value={dataRegister.url} disabled={false} onChange={(e) => setDataRegister({...dataRegister, url: e.target.value})} ></input>
             <button type='submit'>Cadastrar</button>
+            </form>
+            <Link to='/'> <p>Já tem uma conta? Faça login!</p> </Link>
+        </ContainerRegister>
+        :
+        <ContainerRegister>
+            <Img src={Logo} />
+            <form onSubmit={RegisterNewUser}>
+            <input type="email" placeholder="Email" value={dataRegister.email} disabled={true} onChange={(e) => setDataRegister({...dataRegister, email: e.target.value})} ></input>
+            <input type="password" placeholder="Senha" value={dataRegister.password} disabled={true} onChange={(e) => setDataRegister({...dataRegister, password: e.target.value })} ></input>
+            <input type="text" placeholder="Nome" value={dataRegister.name} disabled={true} onChange={(e) => setDataRegister({...dataRegister, name: e.target.value })} ></input>
+            <input type="url" placeholder="Foto" value={dataRegister.url} disabled={true} onChange={(e) => setDataRegister({...dataRegister, url: e.target.value})} ></input>
+            <button type='submit' disabled>
+                <ThreeDots color="#FFF" height={50} width={50} />
+            </button>
             </form>
             <Link to='/'> <p>Já tem uma conta? Faça login!</p> </Link>
         </ContainerRegister>
@@ -65,10 +89,17 @@ const ContainerRegister = styled.div`
         border-radius: 5px;
         margin-top: 6px;
         margin-left: 36px;
+        padding-left: 13px;
+        color: #666666;
+        font-family: 'Lexend Deca';
+    }
+
+    input:focus {
+    box-shadow: 0 0 0 0;
+    outline: 0;
     }
 
     input::placeholder {
-    padding-left: 11px;
     color: #DBDBDB;
     font-size: 15px;
 }
@@ -84,6 +115,9 @@ const ContainerRegister = styled.div`
         margin-left: 36px;
         font-family: 'Lexend Deca';
         font-size: 20.976px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         cursor: pointer;
     }
 

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
+import { ThreeDots } from "react-loader-spinner";
+import { useEffect } from "react";
 
 import axios from "axios";
 import styled from 'styled-components';
@@ -7,15 +10,23 @@ import styled from 'styled-components';
 import Header from './Header';
 import Menu from './Menu';
 import UserContext from './Contexts/UserContext';
+import BoxDays from "./BoxDays";
 
 function Habits() {
 
     const { token } = useContext(UserContext)
 
+    const navigate = useNavigate();
+
     const [addDay, setAddDay] = useState([])
     const [newHabit, setNewHabit] = useState("")
+    const [button, setButton] = useState(false)
+    const [isloading, setIsLoading] = useState(false)
+    const [myHabits, setMyHabits] = useState([])
+    
 
-    console.log(addDay)
+    const buttonCancel = "#ffffff";
+    const buttonSave = "#52B6FF;"
 
     const days = [
         { id: 1, day: "D" },
@@ -27,40 +38,73 @@ function Habits() {
         { id: 7, day: "S" }
     ]
 
-    const obj = {
-        name: newHabit,
-        days: addDay
-    }
-
-    console.log(obj)
-
-    function postNewHabit (e) {
-        e.preventDefault()
-
-        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits"
-        const config = { headers: {
-            Authorization: `Bearer ${token}`
+    useEffect(() => {
+        const URLITEMS = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits"
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
         }
-    }
-        const promise = axios.post(URL, obj, config)
+        const promise = axios.get(URLITEMS, config)
         promise.then(response => {
             const {data} = response
             console.log(data)
+            setMyHabits(data)
+        })
+        promise.catch(err => {
+            console.log(err.response)
+        })
+    }, [])
+
+    function postNewHabit(e) {
+        e.preventDefault()
+        setIsLoading(true)
+
+        const obj = {
+            name: newHabit,
+            days: addDay
+        }
+
+        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits"
+        const config = {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+        const promise = axios.post(URL, obj, config)
+        promise.then(response => {
+            const { data } = response
+            console.log(data)
+            setIsLoading(false)
+            navigate("/hoje")
         })
         promise.catch(error => {
             alert("Deu algum erro...");
+            setIsLoading(false)
         });
     }
 
+    function ShowHabits() {
+    
+        return myHabits.map(habit => {
+            const { id, name, days, } = habit
+            
+            return (
+                <HabitsList>
+                    <span>{name}</span>
+                    <div className="dayshabits">
+                        <BoxDay>
 
-    const [button, setButton] = useState(false)
+                        </BoxDay>
+                    </div>
+                    <ion-icon name="trash-outline"></ion-icon>
+                </HabitsList>
+            )
+        })
+    }
 
-    const buttonCancel = "#ffffff";
-    const buttonSave = "#52B6FF;"
 
-
-    if (button === false) {
-
+    if (button === false && myHabits.length === 0) {
         return (
             <>
                 <Header />
@@ -76,21 +120,43 @@ function Habits() {
                 <Menu />
             </>
         )
-    } else if (button === true) {
-
+    
+    } else if (button === false && myHabits.length > 0) {
         return (
             <>
                 <Header />
                 <ContainerHabits>
+
+                    <CreateHabits>
+                        <p>Meus hábitos</p>
+                        <button onClick={() => setButton(true)}>+</button>
+                    </CreateHabits>
+
+                    {ShowHabits()}
+
+                </ContainerHabits>
+                <Menu />
+            </>
+        )
+    
+    } else if (button === true && isloading === false && myHabits.length === 0) {
+        return (
+            <>
+                <Header />
+                <ContainerHabits>
+                    
                     <CreateHabits>
                         <p>Meus hábitos</p>
                         <button>+</button>
                     </CreateHabits>
+                    
                     <BoxNewHabit>
-                        <input type="type" placeholder="Nome do hábito" value={newHabit} onChange={(e) => setNewHabit(e.target.value)} />
+                        <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={false} onChange={(e) => setNewHabit(e.target.value)} />
+                        
                         <BoxDay>
-                            {days.map(day => <BoxDays addDay={addDay} setAddDay={setAddDay} info={day} />)}
+                            {days.map(day => <BoxDays teste={"teste"} addDay={addDay} setAddDay={setAddDay} info={day} />)}
                         </BoxDay>
+                        
                         <Buttons>
                             <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
                             <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
@@ -102,46 +168,92 @@ function Habits() {
                 <Menu />
             </>
         )
-    }
-}
-
-function BoxDays(props) {
-
-    const { info, addDay, setAddDay } = props
-
-    const [selecionado, setSelecionado] = useState(false)
-
-    const corSelecionado = "#CFCFCF";
-    const corDesseleiocnado = "#ffffff"
-
-    const textColorSelecionado = "#ffffff"
-    const textColorDesselecionado = "#DBDBDB;"
-
-    console.log(selecionado)
-    if (selecionado === false) {
-
+    } else if (button === true && isloading === false && myHabits.length > 0) {
         return (
+            <>
+                <Header />
+                <ContainerHabits>
+                    
+                    <CreateHabits>
+                        <p>Meus hábitos</p>
+                        <button>+</button>
+                    </CreateHabits>
+                    
+                    <BoxNewHabit>
+                        <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={false} onChange={(e) => setNewHabit(e.target.value)} />
 
-            <Day cor={corDesseleiocnado} textColor={textColorDesselecionado} onClick={() => {
-                setAddDay([...addDay, info.id])
-                console.log("entrou no false")
-                setSelecionado(true)
-            }}>
-                <p>{info.day}</p>
-            </Day>
+                        <BoxDay>
+                            {days.map(day => <BoxDays addDay={addDay} setAddDay={setAddDay} info={day} />)}
+                        </BoxDay>
+                        
+                        <Buttons>
+                            <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
+                            <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
+                        </Buttons>
+                    </BoxNewHabit>
+
+                    {ShowHabits()}
+                
+                </ContainerHabits>
+                <Menu />
+            </>
         )
-    } else if (selecionado === true) {
-        console.log("entrou");
-        console.log(selecionado)
-        return (
+    } else if (button === true && isloading === true && myHabits.length > 0) {
 
-            <Day cor={corSelecionado} textColor={textColorSelecionado} onClick={() => {
-                setAddDay(addDay.splice(addDay.indexOf(info.id), 1))
-                setAddDay([...addDay])
-                setSelecionado(false)
-            }}>
-                <p>{info.day}</p>
-            </Day>
+        return (
+            <>
+                <Header />
+                <ContainerHabits>
+                    <CreateHabits>
+                        <p>Meus hábitos</p>
+                        <button>+</button>
+                    </CreateHabits>
+                    <BoxNewHabit>
+                        <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={true} onChange={(e) => setNewHabit(e.target.value)} />
+                        <BoxDay>
+                            {days.map(day => <BoxDays addDay={addDay} setAddDay={setAddDay} info={day} />)}
+                        </BoxDay>
+                        <Buttons>
+                            <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
+                            <button buttonColor={buttonSave} disabled>
+                                <ThreeDots color="#FFF" height={50} width={50} />
+                            </button>
+                        </Buttons>
+                    </BoxNewHabit>
+
+                    {ShowHabits()}
+                
+                </ContainerHabits>
+                <Menu />
+            </>
+        )
+    } else if (button === true && isloading === true && myHabits.length === 0) {
+        
+        return (
+            <>
+                <Header />
+                <ContainerHabits>
+                    <CreateHabits>
+                        <p>Meus hábitos</p>
+                        <button>+</button>
+                    </CreateHabits>
+                    <BoxNewHabit>
+                        <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={true} onChange={(e) => setNewHabit(e.target.value)} />
+                        <BoxDay>
+                            {days.map(day => <BoxDays addDay={addDay} setAddDay={setAddDay} info={day} />)}
+                        </BoxDay>
+                        <Buttons>
+                            <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
+                            <button buttonColor={buttonSave}>
+                                <ThreeDots color="#FFF" height={50} width={50} />
+                            </button>
+                        </Buttons>
+                    </BoxNewHabit>
+
+                    <p className="description" >Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
+                </ContainerHabits>
+                <Menu />
+            </>
         )
     }
 }
@@ -202,6 +314,7 @@ const BoxNewHabit = styled.div`
     background: #FFFFFF;
     border-radius: 5px;
     margin: auto auto;
+    margin-bottom: 15px;
 
     input{
         width:303px;
@@ -235,23 +348,6 @@ const BoxDay = styled.div`
     display: flex;
     cursor: pointer;
 `
-const Day = styled.div`
-    width: 30px;
-    height: 30px;
-    border: 1px solid #D5D5D5;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 6px;
-    background: ${props => props.cor};
-
-    p {
-        font-family: 'Lexend Deca';
-        font-size: 19.976px;
-        color: ${props => props.textColor}
-    }
-`
 const Buttons = styled.div`
     width: 340px;
     height: 35px;
@@ -261,19 +357,20 @@ const Buttons = styled.div`
     button {
         border: none;
         border-radius: 4.63636px;
-        width:84px;
+        width: 84px;
         font-family: 'Lexend Deca';
         font-size: 15.976px;
         margin-right: 16px;
-        display:flex;
-        justify-content: center;
-        padding-top:6px;
         cursor: pointer;
     }
 
     button:last-of-type {
         background: #52B6FF;
         color: #FFFFFF;
+        padding-bottom: 2px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
     button:first-child {
@@ -282,4 +379,49 @@ const Buttons = styled.div`
         margin-left: 136px;
     }
 `
+const HabitsList = styled.div`
+    width: 340px;
+    height: 91px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    margin: auto auto;
+    position: relative;
+    margin-bottom: 15px;
+
+    &:last-of-type {
+        margin-bottom: 130px;
+    }
+
+    span {
+        position: absolute;
+        margin-top: 40px;
+        height:25px;
+        font-family: 'Lexend Deca';
+        font-size: 19.976px;
+        line-height: 25px;
+        margin-top: 13px;
+        margin-left: 15px;
+        color: #666666;
+    }
+
+    .dayshabits{
+        margin-top: 47px;
+        margin-left: -5px;
+    }
+
+    ion-icon {
+        font-size:18px;
+        position:absolute;
+        top:0;
+        right:0;
+        color: #666666;
+        margin-right: 10px;
+        margin-top: 11px;
+        cursor: pointer;
+    }
+`
+const ButtonDay = styled.div`
+
+`
+
 export default Habits;
