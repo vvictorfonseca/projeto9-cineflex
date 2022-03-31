@@ -53,16 +53,16 @@ function Login () {
         return (
             isloading === true ?
             <form onSubmit={LoginUser}>
-            <input type="email" placeholder="Email" value={dataLogin.emailLogin} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin}  onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
+            <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={true} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
+            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={true} onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
             <button type='submit' disabled>
             <ThreeDots color="#FFF" height={50} width={50} />
             </button>
             </form>
             :
             <form onSubmit={LoginUser}>
-            <input type="email" placeholder="Email" value={dataLogin.emailLogin} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin}  onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
+            <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={false} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
+            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={false}  onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
             <button type='submit'>Entrar</button>
             </form>
         )
