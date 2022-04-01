@@ -25,7 +25,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Login />} />
                     <Route path="/cadastro" element={<Register />} />
-                    <Route path="/habitos" element={<Habits />} />
+                    <Route path="/habitos/" element={<Habits />} />
                     <Route path="/hoje" element={<Today />} />
                     <Route path="/historico" element={<Latest />} />
                 </Routes>

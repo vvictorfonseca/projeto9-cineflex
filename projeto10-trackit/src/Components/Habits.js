@@ -23,7 +23,6 @@ function Habits() {
     const [button, setButton] = useState(false)
     const [isloading, setIsLoading] = useState(false)
     const [myHabits, setMyHabits] = useState([])
-    
 
     const buttonCancel = "#ffffff";
     const buttonSave = "#52B6FF;"
@@ -38,6 +37,8 @@ function Habits() {
         { id: 7, day: "S" }
     ]
 
+    /*Puxar os Hábitos ja cadastrados do usuário */
+
     useEffect(() => {
         const URLITEMS = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits"
         const config = {
@@ -47,7 +48,7 @@ function Habits() {
         }
         const promise = axios.get(URLITEMS, config)
         promise.then(response => {
-            const {data} = response
+            const { data } = response
             console.log(data)
             setMyHabits(data)
         })
@@ -55,6 +56,10 @@ function Habits() {
             console.log(err.response)
         })
     }, [])
+
+    /*Puxar os Hábitos ja cadastrados do usuário */
+
+    /*Adicionar um novo Hábito*/
 
     function postNewHabit(e) {
         e.preventDefault()
@@ -75,8 +80,11 @@ function Habits() {
         promise.then(response => {
             const { data } = response
             console.log(data)
+            setMyHabits([...myHabits, data])
+            setNewHabit("")
+            ShowHabits()
             setIsLoading(false)
-            navigate("/hoje")
+            setButton(false)
         })
         promise.catch(error => {
             alert("Deu algum erro...");
@@ -84,25 +92,65 @@ function Habits() {
         });
     }
 
+    /*Adicionar um novo Hábito*/
+
+    /*Renderizar os Hábitos*/
+
     function ShowHabits() {
-    
+
+        const backgroundselected = "#CFCFCF"
+        const backgroundnotselected = "#ffffff"
+
+        const textColorSelected = "#ffffff"
+        const textColorNotselected = "#DBDBDB"
+
+        const weekdays = [1, 2, 3, 4, 5, 6, 7];
+        const changeToLetter = { 1: "D", 2: "S", 3: "T", 4: "Q", 5: "Q", 6: "S", 7: "S" }
+
         return myHabits.map(habit => {
-            const { id, name, days, } = habit
-            
+            const { name, days, id } = habit
+
             return (
                 <HabitsList>
                     <span>{name}</span>
                     <div className="dayshabits">
                         <BoxDay>
-
+                            {
+                                weekdays.map(day =>
+                                    <ButtonDay
+                                        cor={days.includes(day) ? backgroundselected : backgroundnotselected}
+                                        textColor={days.includes(day) ? textColorSelected : textColorNotselected}>
+                                        {changeToLetter[day]}
+                                    </ButtonDay>)
+                            }
                         </BoxDay>
                     </div>
-                    <ion-icon name="trash-outline"></ion-icon>
+
+
+                    <ion-icon onClick={() => {
+                        const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`
+                        const config = {
+                            headers: {
+                                Authorization: `Bearer ${token}`
+                            }
+                        }
+                        const promise = axios.delete(URL, config)
+                        promise.then( () => {
+                            console.log("entrou")
+                            setMyHabits([...myHabits])
+                            navigate("/hoje")
+                            ShowHabits()
+                        })
+                    }} name="trash-outline"></ion-icon>
+
                 </HabitsList>
             )
         })
     }
 
+    /*Renderizar os Hábitos*/
+
+    /*Render Tela inteira*/
 
     if (button === false && myHabits.length === 0) {
         return (
@@ -120,7 +168,7 @@ function Habits() {
                 <Menu />
             </>
         )
-    
+
     } else if (button === false && myHabits.length > 0) {
         return (
             <>
@@ -138,25 +186,25 @@ function Habits() {
                 <Menu />
             </>
         )
-    
+
     } else if (button === true && isloading === false && myHabits.length === 0) {
         return (
             <>
                 <Header />
                 <ContainerHabits>
-                    
+
                     <CreateHabits>
                         <p>Meus hábitos</p>
                         <button>+</button>
                     </CreateHabits>
-                    
+
                     <BoxNewHabit>
                         <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={false} onChange={(e) => setNewHabit(e.target.value)} />
-                        
+
                         <BoxDay>
                             {days.map(day => <BoxDays teste={"teste"} addDay={addDay} setAddDay={setAddDay} info={day} />)}
                         </BoxDay>
-                        
+
                         <Buttons>
                             <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
                             <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
@@ -173,19 +221,19 @@ function Habits() {
             <>
                 <Header />
                 <ContainerHabits>
-                    
+
                     <CreateHabits>
                         <p>Meus hábitos</p>
                         <button>+</button>
                     </CreateHabits>
-                    
+
                     <BoxNewHabit>
                         <input type="type" placeholder="Nome do hábito" value={newHabit} disabled={false} onChange={(e) => setNewHabit(e.target.value)} />
 
                         <BoxDay>
                             {days.map(day => <BoxDays addDay={addDay} setAddDay={setAddDay} info={day} />)}
                         </BoxDay>
-                        
+
                         <Buttons>
                             <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
                             <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
@@ -193,7 +241,7 @@ function Habits() {
                     </BoxNewHabit>
 
                     {ShowHabits()}
-                
+
                 </ContainerHabits>
                 <Menu />
             </>
@@ -222,13 +270,13 @@ function Habits() {
                     </BoxNewHabit>
 
                     {ShowHabits()}
-                
+
                 </ContainerHabits>
                 <Menu />
             </>
         )
     } else if (button === true && isloading === true && myHabits.length === 0) {
-        
+
         return (
             <>
                 <Header />
@@ -257,6 +305,10 @@ function Habits() {
         )
     }
 }
+
+/*Render Tela inteira*/
+
+/*CSS*/
 
 const ContainerHabits = styled.div`
     width: 375px;
@@ -329,8 +381,8 @@ const BoxNewHabit = styled.div`
     }
 
     input:focus {
-    box-shadow: 0 0 0 0;
-    outline: 0;
+        box-shadow: 0 0 0 0;
+        outline: 0;
     }
 
     input::placeholder {
@@ -420,8 +472,18 @@ const HabitsList = styled.div`
         cursor: pointer;
     }
 `
-const ButtonDay = styled.div`
-
+const ButtonDay = styled.button`
+    width: 30px;
+    height: 30px;
+    border: 1px solid #D5D5D5;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 6px;
+    background: ${props => props.cor};
+    font-family: 'Lexend Deca';
+    font-size: 19.976px;
+    color: ${props => props.textColor}    
 `
-
 export default Habits;
