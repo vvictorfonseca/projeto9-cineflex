@@ -1,72 +1,15 @@
-import { useContext } from "react";
-import { useEffect } from "react";
 import { useState } from "react";
+import { useContext } from "react";
 
 import axios from "axios";
 import styled from 'styled-components';
-
-import UserContext from './Contexts/UserContext';
-import Header from './Header';
-import Menu from './Menu';
-import Day from './dayjs';
-
-export default function Today() {
-
-    const { token } = useContext(UserContext);
-
-    const [attApi, setAttApi] = useState(false)
-
-    const [items, setItems] = useState([])
-
-    useEffect(() => {
-        const URL = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today"
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        }
-        const promise = axios.get(URL, config);
-
-        promise.then((response) => {
-            const { data } = response;
-            setItems(data)
-        });
-        promise.catch(error => {
-            alert("Deu algum erro...");
-        });
-    }, [attApi]);
-
-
-    return (
-        <>
-            <Header />
-            <Container>
-                <ContainerDay>
-                    <Day />
-                </ContainerDay>
-
-                <>
-                    {items.map((item) => <RenderTodayHabit
-                        setItems={setItems}
-                        done={item.done}
-                        info={item}
-                        items={items}
-                        id={item.id}
-                        name={item.name}
-                        currentSequence={item.currentSequence}
-                        highestSequence={item.highestSequence}
-                        attApi={attApi}
-                        setAttApi={setAttApi} />)}
-                </>
-            </Container>
-            <Menu />
-        </>
-    )
-}
+import UserContext from "./Contexts/UserContext";
 
 function RenderTodayHabit (props) {
 
-    const { id, name, done, currentSequence, highestSequence, items, attApi, setAttApi } = props
+    const [check, setIsCheck] = useState(false)
+
+    const { id, name, done, currentSequence, highestSequence, items, setItems } = props
 
     const { token } = useContext(UserContext);
 
@@ -86,8 +29,8 @@ function RenderTodayHabit (props) {
         }
 
         const promise = axios.post(URL, null, config)
-        promise.then( response => {
-            setAttApi(!attApi)
+        promise.then( () => {
+            setIsCheck(true)
             
         })
         promise.catch(err => {
@@ -107,8 +50,8 @@ function RenderTodayHabit (props) {
         }
 
         const promise = axios.post(URL, null, config)
-        promise.then( response => {
-            setAttApi(!attApi)
+        promise.then(() => {
+            setIsCheck(false)
             
         })
         promise.catch(err => {
@@ -125,7 +68,7 @@ function RenderTodayHabit (props) {
                     <p>Sequência atual: {currentSequence} dias</p>
                     <p>Seu recorde: {highestSequence} dias</p>
                 </Infos>
-                <Button  IsCheck={done ? IsCheckTrue : IsCheckFalse } onClick={() => {
+                <Button  IsCheck={check ? IsCheckTrue : IsCheckFalse } onClick={() => {
                     !done ?
                     HabitDone(id)
                     :
@@ -139,23 +82,6 @@ function RenderTodayHabit (props) {
     }
 }
 
-const Container = styled.div`
-    width: 375px;
-    height: 100%;
-    margin: auto auto;
-    display:flex;
-    justify-content: center;
-    flex-direction: column;
-`
-
-const ContainerDay = styled.div`
-    height: 107px;
-    width: 340px;
-    margin: auto auto;
-    display:flex;
-    flex-direction: column;
-    align-items: center;
-`
 const ContainerTodayHabits = styled.div`
     width:340px;
     height:94px;
@@ -223,4 +149,4 @@ const Button = styled.button`
 `
 
 
-
+export default RenderTodayHabit;

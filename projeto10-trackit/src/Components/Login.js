@@ -11,13 +11,13 @@ import Logo from "./../Midias/logo.png";
 
 import UserContext from './Contexts/UserContext';
 
-function Login () {
-    
-    const {setToken, setImgHeader} = useContext(UserContext)
-    
+function Login() {
+
+    const { setToken, setImgHeader } = useContext(UserContext)
+
     const navigate = useNavigate();
 
-    const [dataLogin, setDataLogin] = useState({emailLogin: "", passwordLogin: ""})
+    const [dataLogin, setDataLogin] = useState({ emailLogin: "", passwordLogin: "" })
     const [isloading, setIsLoading] = useState(false)
 
     const objLogin = {
@@ -25,17 +25,16 @@ function Login () {
         password: dataLogin.passwordLogin
     }
 
-    function LoginUser (e) {
+    function LoginUser(e) {
         e.preventDefault()
         setIsLoading(true)
 
-        const URLLOGIN =  "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login"
+        const URLLOGIN = "https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login"
 
         const promise = axios.post(URLLOGIN, objLogin);
-        
+
         promise.then(response => {
-            const {data} = response;
-            console.log(data)
+            const { data } = response;
             setToken(data.token)
             setImgHeader(data.image)
             setIsLoading(false)
@@ -47,27 +46,27 @@ function Login () {
         })
     }
 
-    const LoadInputs = inputs () 
+    const LoadInputs = inputs()
 
-    function inputs () {
+    function inputs() {
         return (
             isloading === true ?
-            <form onSubmit={LoginUser}>
-            <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={true} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={true} onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
-            <button type='submit' disabled>
-            <ThreeDots color="#FFF" height={50} width={50} />
-            </button>
-            </form>
-            :
-            <form onSubmit={LoginUser}>
-            <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={false} onChange={(e) => setDataLogin({...dataLogin, emailLogin: e.target.value})} ></input>
-            <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={false}  onChange={(e) => setDataLogin({...dataLogin, passwordLogin: e.target.value})}></input>
-            <button type='submit'>Entrar</button>
-            </form>
+                <form onSubmit={LoginUser}>
+                    <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={true} onChange={(e) => setDataLogin({ ...dataLogin, emailLogin: e.target.value })} ></input>
+                    <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={true} onChange={(e) => setDataLogin({ ...dataLogin, passwordLogin: e.target.value })}></input>
+                    <button type='submit' disabled>
+                        <ThreeDots color="#FFF" height={50} width={50} />
+                    </button>
+                </form>
+                :
+                <form onSubmit={LoginUser}>
+                    <input type="email" placeholder="Email" value={dataLogin.emailLogin} disabled={false} onChange={(e) => setDataLogin({ ...dataLogin, emailLogin: e.target.value })} ></input>
+                    <input type="password" placeholder="Senha" value={dataLogin.passwordLogin} disabled={false} onChange={(e) => setDataLogin({ ...dataLogin, passwordLogin: e.target.value })}></input>
+                    <button type='submit'>Entrar</button>
+                </form>
         )
     }
-    
+
     return (
         <ContainerLogin>
             <Img src={Logo} />
