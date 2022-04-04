@@ -10,7 +10,7 @@ export default function Header () {
     return (
         <ContainerHeader>
             <h1>TrackIt</h1>
-            <img src={imgHeader} />
+            <img src={imgHeader} alt="UserImage" />
         </ContainerHeader>
     )
 }

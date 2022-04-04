@@ -1,10 +1,10 @@
-import { useContext } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
 
 import axios from "axios";
 import styled from 'styled-components';
 
+import { useContext } from 'react';
 import UserContext from './Contexts/UserContext';
 import Header from './Header';
 import Menu from './Menu';
@@ -12,7 +12,14 @@ import Day from './dayjs';
 
 export default function Today() {
 
+    const IsCheckTrue = "#8FC549";
+    const Progress0 = "#BABABA";
+
     const { token } = useContext(UserContext);
+
+    const { progress, setProgress } = useContext(UserContext);
+    console.log(progress)
+
 
     const [attApi, setAttApi] = useState(false)
 
@@ -30,6 +37,8 @@ export default function Today() {
         promise.then((response) => {
             const { data } = response;
             setItems(data)
+            console.log("entrei", progress)
+            setProgress((data.filter((elemento) => elemento.done).length / data.length) * 100);
         });
         promise.catch(error => {
             alert("Deu algum erro...");
@@ -43,28 +52,31 @@ export default function Today() {
             <Container>
                 <ContainerDay>
                     <Day />
+
+                    {progress > 0 ? <Progress textColor={IsCheckTrue}>{progress.toFixed(0)}% dos hábitos concluídos</Progress> : <Progress textColor={Progress0}>Nenhum hábito concluído ainda</Progress>}
+
                 </ContainerDay>
 
-                <>
-                    {items.map((item) => <RenderTodayHabit
-                        setItems={setItems}
-                        done={item.done}
-                        info={item}
-                        items={items}
-                        id={item.id}
-                        name={item.name}
-                        currentSequence={item.currentSequence}
-                        highestSequence={item.highestSequence}
-                        attApi={attApi}
-                        setAttApi={setAttApi} />)}
-                </>
+
+                {items.map((item) => <RenderTodayHabit
+                    setItems={setItems}
+                    done={item.done}
+                    info={item}
+                    items={items}
+                    id={item.id}
+                    name={item.name}
+                    currentSequence={item.currentSequence}
+                    highestSequence={item.highestSequence}
+                    attApi={attApi}
+                    setAttApi={setAttApi} />)}
+
             </Container>
             <Menu />
         </>
     )
 }
 
-function RenderTodayHabit (props) {
+function RenderTodayHabit(props) {
 
     const { id, name, done, currentSequence, highestSequence, items, attApi, setAttApi } = props
 
@@ -72,12 +84,13 @@ function RenderTodayHabit (props) {
 
     const IsCheckTrue = "#8FC549";
     const IsCheckFalse = "#EBEBEB";
-    
 
-    function HabitDone () {
+    const greyColor = "#666666";
+
+    function HabitDone() {
         console.log("done", id, done, name)
 
-        
+
         const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`
         const config = {
             headers: {
@@ -86,9 +99,9 @@ function RenderTodayHabit (props) {
         }
 
         const promise = axios.post(URL, null, config)
-        promise.then( response => {
+        promise.then(response => {
             setAttApi(!attApi)
-            
+
         })
         promise.catch(err => {
             console.log(id)
@@ -96,7 +109,7 @@ function RenderTodayHabit (props) {
         })
     }
 
-    function HabitUndone () {
+    function HabitUndone() {
         console.log("undone", id, done, name)
 
         const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`
@@ -107,9 +120,9 @@ function RenderTodayHabit (props) {
         }
 
         const promise = axios.post(URL, null, config)
-        promise.then( response => {
+        promise.then(response => {
             setAttApi(!attApi)
-            
+
         })
         promise.catch(err => {
             console.log(id)
@@ -118,22 +131,31 @@ function RenderTodayHabit (props) {
     }
 
     if (items.length > 0) {
-        
-            return <ContainerTodayHabits key={id}>
-                <Infos>
-                    <span>{name}</span>
-                    <p>Sequência atual: {currentSequence} dias</p>
-                    <p>Seu recorde: {highestSequence} dias</p>
-                </Infos>
-                <Button  IsCheck={done ? IsCheckTrue : IsCheckFalse } onClick={() => {
-                    !done ?
+
+        return <ContainerTodayHabits key={id}>
+            <Infos>
+
+                <span>{name}</span>
+
+                <ContainerDiaAtual>
+                    <p>Sequência atual:</p><P textColor={done ? IsCheckTrue : greyColor}>{currentSequence} dias </P>
+                </ContainerDiaAtual>
+
+                <ContainerRecord>
+                    <p>Seu recorde:</p><P textColor={highestSequence === currentSequence && done ? IsCheckTrue : greyColor}>{highestSequence} dias</P>
+                </ContainerRecord>
+
+            </Infos>
+
+            <Button IsCheck={done ? IsCheckTrue : IsCheckFalse} onClick={() => {
+                !done ?
                     HabitDone(id)
                     :
                     HabitUndone(id)
-                }}>
-                    <ion-icon name="checkmark"></ion-icon>
-                </Button>
-            </ContainerTodayHabits>
+            }}>
+                <ion-icon name="checkmark"></ion-icon>
+            </Button>
+        </ContainerTodayHabits>
     } else {
         return <></>
     }
@@ -144,7 +166,6 @@ const Container = styled.div`
     height: 100%;
     margin: auto auto;
     display:flex;
-    justify-content: center;
     flex-direction: column;
 `
 
@@ -154,7 +175,6 @@ const ContainerDay = styled.div`
     margin: auto auto;
     display:flex;
     flex-direction: column;
-    align-items: center;
 `
 const ContainerTodayHabits = styled.div`
     width:340px;
@@ -164,44 +184,66 @@ const ContainerTodayHabits = styled.div`
     border-radius: 5px;
     margin-bottom: 10px;
     display:flex;
-    position: relative;
 
     &:last-of-type {
         margin-bottom: 130px;
     }
 `
 const Infos = styled.div`
-    position: absolute;
     height:93px;
     width:258px;
     margin: auto auto;
+    margin-top: 15px;
 
     span {
-        position: absolute;
         font-family: 'Lexend Deca';
         font-size: 19.976px;
         color: #666666;
         margin-left:15px;
         margin-top:13px
     }
+`
+const ContainerDiaAtual = styled.div`
+    margin-top: 9px;
+    display: flex;
 
-    p{
+    p {
         font-family: 'Lexend Deca';
+        font-style: normal;
+        font-weight: 400;
         font-size: 12.976px;
+        line-height: 16px;
         color: #666666;
         margin-left: 15px;
+    }
 
-        &:first-of-type {
-            margin-top: 45px;
-        }
+`
+const ContainerRecord = styled.div`
+    display:flex;
+    margin-top:1px;
 
-        &:last-of-type {
-            margin-top:3px
-        }
+    p {
+        font-family: 'Lexend Deca';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12.976px;
+        line-height: 16px;
+        color: #666666;
+        margin-left: 15px;
     }
 `
+
+const P = styled.div`     
+    font-family: 'Lexend Deca';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12.976px;
+    line-height: 16px;
+    color: ${props => props.textColor};
+    margin-left: 4px;
+`;
+
 const Button = styled.button`
-    position: absolute;
     width:69px;
     height:69px;
     right:0;
@@ -221,6 +263,19 @@ const Button = styled.button`
         color: white
     }
 `
+
+const Progress = styled.p`
+    
+        font-family: 'Lexend Deca';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 19.976px;
+        line-height: 25px;
+        color: ${props => props.textColor};
+        margin-bottom: 25px;
+`;
+
+
 
 
 

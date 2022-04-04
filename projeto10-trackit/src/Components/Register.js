@@ -46,7 +46,7 @@ function Register () {
     return (
     isloading === false ?
         <ContainerRegister>
-            <Img src={Logo} />
+            <Img src={Logo} alt="Logo" />
             <form onSubmit={RegisterNewUser}>
             <input type="email" placeholder="Email" value={dataRegister.email} disabled={false} onChange={(e) => setDataRegister({...dataRegister, email: e.target.value})} ></input>
             <input type="password" placeholder="Senha" value={dataRegister.password} disabled={false} onChange={(e) => setDataRegister({...dataRegister, password: e.target.value })} ></input>

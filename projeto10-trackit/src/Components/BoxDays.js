@@ -9,6 +9,8 @@ function BoxDays(props) {
 
     const [selecionado, setSelecionado] = useState(false)
 
+    console.log(addDay)
+
     const corSelecionado = "#CFCFCF";
     const corDesseleiocnado = "#ffffff"
 

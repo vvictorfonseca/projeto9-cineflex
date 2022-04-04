@@ -28,13 +28,13 @@ function Habits() {
     const buttonSave = "#52B6FF;"
 
     const days = [
-        { id: 1, day: "D" },
-        { id: 2, day: "S" },
-        { id: 3, day: "T" },
+        { id: 1, day: "S" },
+        { id: 2, day: "T" },
+        { id: 3, day: "Q" },
         { id: 4, day: "Q" },
-        { id: 5, day: "Q" },
+        { id: 5, day: "S" },
         { id: 6, day: "S" },
-        { id: 7, day: "S" }
+        { id: 7, day: "D" }
     ]
 
     /*Puxar os Hábitos ja cadastrados do usuário */
@@ -85,6 +85,7 @@ function Habits() {
             ShowHabits()
             setIsLoading(false)
             setButton(false)
+            setAddDay([])
         })
         promise.catch(error => {
             alert("Deu algum erro...");
@@ -105,7 +106,7 @@ function Habits() {
         const textColorNotselected = "#DBDBDB"
 
         const weekdays = [1, 2, 3, 4, 5, 6, 7];
-        const changeToLetter = { 1: "D", 2: "S", 3: "T", 4: "Q", 5: "Q", 6: "S", 7: "S" }
+        const changeToLetter = { 1: "S", 2: "T", 3: "Q", 4: "Q", 5: "S", 6: "S", 7: "D" }
 
         return myHabits.map(habit => {
             const { name, days, id } = habit
@@ -139,7 +140,7 @@ function Habits() {
                             console.log("entrou")
                             setMyHabits([...myHabits])
                             navigate("/hoje")
-                            ShowHabits()
+                            ShowHabits() 
                         })
                     }} name="trash-outline"></ion-icon>
 
@@ -207,7 +208,7 @@ function Habits() {
 
                         <Buttons>
                             <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
-                            <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
+                            <button buttonColor={buttonSave} disabled={addDay.length > 0 ? false:true} onClick={postNewHabit}>Salvar</button>
                         </Buttons>
                     </BoxNewHabit>
 
@@ -236,7 +237,7 @@ function Habits() {
 
                         <Buttons>
                             <button buttonColor={buttonCancel} onClick={() => setButton(false)}>Cancelar</button>
-                            <button buttonColor={buttonSave} onClick={postNewHabit}>Salvar</button>
+                            <button buttonColor={buttonSave} disabled={addDay.length > 0 ? false:true} onClick={postNewHabit}>Salvar</button>
                         </Buttons>
                     </BoxNewHabit>
 
