@@ -18,7 +18,6 @@ export default function Today() {
     const { token } = useContext(UserContext);
 
     const { progress, setProgress } = useContext(UserContext);
-    console.log(progress)
 
 
     const [attApi, setAttApi] = useState(false)
@@ -37,7 +36,6 @@ export default function Today() {
         promise.then((response) => {
             const { data } = response;
             setItems(data)
-            console.log("entrei", progress)
             setProgress((data.filter((elemento) => elemento.done).length / data.length) * 100);
         });
         promise.catch(error => {
@@ -88,8 +86,6 @@ function RenderTodayHabit(props) {
     const greyColor = "#666666";
 
     function HabitDone() {
-        console.log("done", id, done, name)
-
 
         const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`
         const config = {
@@ -104,13 +100,11 @@ function RenderTodayHabit(props) {
 
         })
         promise.catch(err => {
-            console.log(id)
-            console.log(err.response)
+            alert("Deu erro");
         })
     }
 
     function HabitUndone() {
-        console.log("undone", id, done, name)
 
         const URL = `https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`
         const config = {
@@ -125,8 +119,7 @@ function RenderTodayHabit(props) {
 
         })
         promise.catch(err => {
-            console.log(id)
-            console.log(err)
+            alert("Deu algum erro!")
         })
     }
 

@@ -49,11 +49,9 @@ function Habits() {
         const promise = axios.get(URLITEMS, config)
         promise.then(response => {
             const { data } = response
-            console.log(data)
             setMyHabits(data)
         })
         promise.catch(err => {
-            console.log(err.response)
         })
     }, [])
 
@@ -79,7 +77,6 @@ function Habits() {
         const promise = axios.post(URL, obj, config)
         promise.then(response => {
             const { data } = response
-            console.log(data)
             setMyHabits([...myHabits, data])
             setNewHabit("")
             ShowHabits()
@@ -135,13 +132,17 @@ function Habits() {
                                 Authorization: `Bearer ${token}`
                             }
                         }
-                        const promise = axios.delete(URL, config)
-                        promise.then( () => {
-                            console.log("entrou")
-                            setMyHabits([...myHabits])
-                            navigate("/hoje")
-                            ShowHabits() 
-                        })
+                        if (window.confirm("Voce tem certeza?") === false) {
+                            return
+                        } else {
+
+                            const promise = axios.delete(URL, config)
+                            promise.then( () => {
+                                setMyHabits([...myHabits])
+                                navigate("/hoje")
+                                ShowHabits() 
+                            })
+                        }
                     }} name="trash-outline"></ion-icon>
 
                 </HabitsList>

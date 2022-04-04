@@ -17,7 +17,6 @@ function App() {
     const [progress, setProgress] = useState(0);
 
     const contextValue = { token, setToken, imgHeader, setImgHeader, progress, setProgress }
-    console.log(contextValue)
 
     return (
         <>

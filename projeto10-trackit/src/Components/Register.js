@@ -32,12 +32,10 @@ function Register () {
 
         promise.then(response => {
             const {data} = response;
-            console.log(data)
             setIsLoading(false)
             navigate("/")
         })
         promise.catch(err => {
-            console.log(err.response)
             setIsLoading(false)
             alert("Erro ao registrar um novo usuário!")
         })

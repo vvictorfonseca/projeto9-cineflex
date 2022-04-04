@@ -3,9 +3,7 @@ import styled from 'styled-components';
 
 import ProgressBar from './ProgressBar';
 
-function Menu (props) {
-
-    const {id} = props
+function Menu () {
 
     return (
         <ContainerMenu>

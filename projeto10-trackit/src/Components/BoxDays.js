@@ -4,12 +4,9 @@ import styled from 'styled-components';
 
 function BoxDays(props) {
 
-    console.log(props)
     const { info, addDay, setAddDay } = props
 
     const [selecionado, setSelecionado] = useState(false)
-
-    console.log(addDay)
 
     const corSelecionado = "#CFCFCF";
     const corDesseleiocnado = "#ffffff"
@@ -17,22 +14,19 @@ function BoxDays(props) {
     const textColorSelecionado = "#ffffff"
     const textColorDesselecionado = "#DBDBDB;"
 
-    console.log(selecionado)
     if (selecionado === false) {
 
         return (
 
             <Day cor={corDesseleiocnado} textColor={textColorDesselecionado} onClick={() => {
                 setAddDay([...addDay, info.id])
-                console.log("entrou no false")
                 setSelecionado(true)
             }}>
                 <p>{info.day}</p>
             </Day>
         )
     } else if (selecionado === true) {
-        console.log("entrou");
-        console.log(selecionado)
+        
         return (
 
             <Day cor={corSelecionado} textColor={textColorSelecionado} onClick={() => {
